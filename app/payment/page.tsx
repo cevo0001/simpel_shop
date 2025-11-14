@@ -1,45 +1,32 @@
-type PaymentPageProps = {
-  searchParams?: { items?: string };
-};
+"use client";
 
-type Product = {
-  id: number;
-  title: string;
-  price: number;
-  thumbnail: string;
-};
+import { useCartStore } from "../../lib/cartStore";
+import Link from "next/link";
 
-async function getProduct(id: number): Promise<Product> {
-  const res = await fetch(`https://dummyjson.com/products/${id}`);
-  if (!res.ok) {
-    throw new Error("Kunne ikke hente produkt");
-  }
-  return res.json();
-}
+export default function PaymentPage() {
+  const { items, removeItem, clear } = useCartStore();
 
-export default async function PaymentPage({ searchParams }: PaymentPageProps) {
-  const itemsParam = searchParams?.items || "";
-  const ids =
-    itemsParam.length > 0
-      ? itemsParam.split(",").map((id) => Number(id))
-      : [];
-
-  const products =
-    ids.length > 0 ? await Promise.all(ids.map((id) => getProduct(id))) : [];
-
-  const total = products.reduce((sum, p) => sum + p.price, 0);
+  const total = items.reduce((sum, item) => sum + item.price, 0);
 
   return (
     <main className="min-h-screen bg-slate-100">
       <div className="max-w-3xl mx-auto py-10 px-4 space-y-6">
-        <h1 className="text-3xl font-bold">Fake betalingsside</h1>
+        <h1 className="text-3xl font-bold">Indkøbskurv / Fake betaling</h1>
 
-        {products.length === 0 ? (
-          <p>Du har ingen produkter i kurven.</p>
+        {items.length === 0 ? (
+          <div className="space-y-3">
+            <p>Du har ingen produkter i kurven.</p>
+            <Link
+              href="/products"
+              className="inline-block text-sm underline"
+            >
+              ← Gå tilbage til produkterne
+            </Link>
+          </div>
         ) : (
           <>
             <ul className="space-y-4">
-              {products.map((p) => (
+              {items.map((p) => (
                 <li
                   key={p.id}
                   className="flex items-center justify-between bg-white rounded-lg p-4 shadow-sm"
@@ -55,6 +42,12 @@ export default async function PaymentPage({ searchParams }: PaymentPageProps) {
                       <p className="text-sm text-slate-500">{p.price} kr.</p>
                     </div>
                   </div>
+                  <button
+                    onClick={() => removeItem(p.id)}
+                    className="text-xs sm:text-sm rounded-md px-3 py-1 bg-red-500 text-white hover:bg-red-600"
+                  >
+                    Fjern
+                  </button>
                 </li>
               ))}
             </ul>
@@ -64,9 +57,17 @@ export default async function PaymentPage({ searchParams }: PaymentPageProps) {
               <span className="font-bold text-lg">{total} kr.</span>
             </div>
 
-            <button className="w-full rounded-md bg-emerald-600 text-white py-3 font-semibold hover:bg-emerald-700 mt-4">
-              Fake betal nu
-            </button>
+            <div className="flex flex-col sm:flex-row gap-3">
+              <button className="flex-1 rounded-md bg-emerald-600 text-white py-3 font-semibold hover:bg-emerald-700">
+                Fake betal nu
+              </button>
+              <button
+                onClick={clear}
+                className="flex-1 rounded-md bg-slate-300 text-slate-800 py-3 font-semibold hover:bg-slate-400"
+              >
+                Tøm kurv
+              </button>
+            </div>
           </>
         )}
       </div>

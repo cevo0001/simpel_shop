@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import { useCartStore } from "../../lib/cartStore";
 
 type Product = {
   id: number;
@@ -14,9 +15,10 @@ type Product = {
 export default function ProductsPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selectedIds, setSelectedIds] = useState<number[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>("alle");
   const [search, setSearch] = useState("");
+
+  const { items: cartItems, addItem, removeItem } = useCartStore();
 
   useEffect(() => {
     async function fetchProducts() {
@@ -50,17 +52,24 @@ export default function ProductsPage() {
     });
   }, [products, selectedCategory, search]);
 
-  function toggleCart(id: number) {
-    setSelectedIds((prev) =>
-      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
-    );
+  function toggleCart(product: Product) {
+    const isInCart = cartItems.some((item) => item.id === product.id);
+    if (isInCart) {
+      removeItem(product.id);
+    } else {
+      addItem({
+        id: product.id,
+        title: product.title,
+        price: product.price,
+        thumbnail: product.thumbnail,
+      });
+    }
   }
-
-  const itemsParam = selectedIds.join(",");
 
   return (
     <main className="min-h-screen bg-slate-50">
       <div className="max-w-6xl mx-auto py-10 px-4 space-y-6">
+        {/* Top: titel + søgning + filtrering */}
         <header className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <h1 className="text-3xl font-bold">Produkter</h1>
@@ -95,6 +104,7 @@ export default function ProductsPage() {
           </div>
         </header>
 
+        {/* Info + kurv / betaling */}
         <section className="flex justify-between items-center border-y py-3 text-sm">
           <p className="text-slate-600">
             Viser {filteredProducts.length} ud af {products.length} produkter
@@ -102,58 +112,62 @@ export default function ProductsPage() {
           <div className="flex items-center gap-3">
             <p className="text-slate-700">
               Kurv:{" "}
-              <span className="font-semibold">{selectedIds.length} varer</span>
+              <span className="font-semibold">{cartItems.length} varer</span>
             </p>
             <Link
-              href={
-                selectedIds.length > 0 ? `/payment?items=${itemsParam}` : "#"
-              }
+              href="/payment"
               className={`rounded-md px-4 py-2 text-sm font-semibold ${
-                selectedIds.length > 0
+                cartItems.length > 0
                   ? "bg-emerald-600 text-white hover:bg-emerald-700"
                   : "bg-slate-300 text-slate-500 cursor-not-allowed"
               }`}
-              aria-disabled={selectedIds.length === 0}
+              aria-disabled={cartItems.length === 0}
             >
-              Gå til betaling
+              Gå til kurv
             </Link>
           </div>
         </section>
 
+        {/* Selve produkterne */}
         {loading ? (
           <p>Henter produkter...</p>
         ) : (
           <section className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {filteredProducts.map((product) => {
-              const isInCart = selectedIds.includes(product.id);
+              const isInCart = cartItems.some(
+                (item) => item.id === product.id
+              );
+
               return (
                 <article
                   key={product.id}
                   className="bg-white rounded-lg p-4 shadow hover:shadow-md transition flex flex-col"
                 >
-                  <img
-                    src={product.thumbnail}
-                    alt={product.title}
-                    className="w-full h-40 object-cover rounded"
-                  />
-                  <div className="mt-3 space-y-1 flex-1">
-                    <h2 className="font-semibold line-clamp-2">
-                      {product.title}
-                    </h2>
-                    <p className="text-sm text-slate-500">
-                      {product.category}
-                    </p>
-                    <p className="font-bold">{product.price} kr.</p>
-                  </div>
-                  <div className="mt-3 flex justify-between items-center gap-2">
-                    <Link
-                      href={`/products/${product.id}`}
-                      className="text-xs sm:text-sm underline"
-                    >
-                      Se detaljer
-                    </Link>
+                  {/* Klikbart kort -> detaljeside */}
+                  <Link
+                    href={`/products/${product.id}`}
+                    className="block flex-1"
+                  >
+                    <img
+                      src={product.thumbnail}
+                      alt={product.title}
+                      className="w-full h-40 object-cover rounded"
+                    />
+                    <div className="mt-3 space-y-1">
+                      <h2 className="font-semibold line-clamp-2">
+                        {product.title}
+                      </h2>
+                      <p className="text-sm text-slate-500">
+                        {product.category}
+                      </p>
+                      <p className="font-bold">{product.price} kr.</p>
+                    </div>
+                  </Link>
+
+                  {/* Kurv-knap */}
+                  <div className="mt-3 flex justify-end">
                     <button
-                      onClick={() => toggleCart(product.id)}
+                      onClick={() => toggleCart(product)}
                       className={`text-xs sm:text-sm rounded-md px-3 py-1 ${
                         isInCart
                           ? "bg-red-500 text-white hover:bg-red-600"

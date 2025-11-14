@@ -1,4 +1,9 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { useParams } from "next/navigation";
 import Link from "next/link";
+import { useCartStore } from "../../../lib/cartStore";
 
 type Product = {
   id: number;
@@ -10,20 +15,81 @@ type Product = {
   category: string;
 };
 
-async function getProduct(id: string): Promise<Product> {
-  const res = await fetch(`https://dummyjson.com/products/${id}`);
-  if (!res.ok) {
-    throw new Error("Kunne ikke hente produktet");
+export default function ProductPage() {
+  const params = useParams<{ id: string }>();
+  const id = params.id;
+
+  const [product, setProduct] = useState<Product | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const { items: cartItems, addItem, removeItem } = useCartStore();
+
+  useEffect(() => {
+    async function fetchProduct() {
+      try {
+        const res = await fetch(`https://dummyjson.com/products/${id}`);
+        if (!res.ok) {
+          throw new Error("Kunne ikke hente produktet");
+        }
+        const data = await res.json();
+        setProduct(data);
+      } catch (err) {
+        console.error(err);
+        setError("Der opstod en fejl ved hentning af produktet.");
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    if (id) {
+      fetchProduct();
+    }
+  }, [id]);
+
+  if (loading) {
+    return (
+      <main className="min-h-screen bg-slate-50">
+        <div className="max-w-4xl mx-auto py-10 px-4">
+          <p>Henter produkt...</p>
+        </div>
+      </main>
+    );
   }
-  return res.json();
-}
 
-type ProductPageProps = {
-  params: { id: string };
-};
+  if (error || !product) {
+    return (
+      <main className="min-h-screen bg-slate-50">
+        <div className="max-w-4xl mx-auto py-10 px-4 space-y-4">
+          <Link href="/products" className="text-sm underline">
+            ← Tilbage til produktsiden
+          </Link>
+          <h1 className="text-2xl font-bold">Produktet kunne ikke findes</h1>
+          <p className="text-slate-600">{error}</p>
+        </div>
+      </main>
+    );
+  }
 
-export default async function ProductPage({ params }: ProductPageProps) {
-  const product = await getProduct(params.id);
+  // ✨ SAFE VARIABEL – TypeScript elsker det her
+  const currentProduct: Product = product;
+
+  const isInCart = cartItems.some(
+    (item) => item.id === currentProduct.id
+  );
+
+  function handleToggleCart() {
+    if (isInCart) {
+      removeItem(currentProduct.id);
+    } else {
+      addItem({
+        id: currentProduct.id,
+        title: currentProduct.title,
+        price: currentProduct.price,
+        thumbnail: currentProduct.thumbnail,
+      });
+    }
+  }
 
   return (
     <main className="min-h-screen bg-slate-50">
@@ -34,22 +100,38 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
         <div className="grid gap-8 md:grid-cols-2">
           <img
-            src={product.thumbnail}
-            alt={product.title}
+            src={currentProduct.thumbnail}
+            alt={currentProduct.title}
             className="w-full h-80 object-cover rounded"
           />
 
           <div className="space-y-4">
-            <h1 className="text-3xl font-bold">{product.title}</h1>
-            <p className="text-slate-600">{product.description}</p>
-            <p className="text-xl font-bold">{product.price} kr.</p>
+            <h1 className="text-3xl font-bold">{currentProduct.title}</h1>
+            <p className="text-slate-600">{currentProduct.description}</p>
+            <p className="text-xl font-bold">{currentProduct.price} kr.</p>
             <p className="text-sm text-slate-500">
-              Kategori: {product.category}
+              Kategori: {currentProduct.category}
             </p>
 
-            <button className="rounded-md bg-black text-white px-4 py-2 hover:bg-slate-800">
-              Læg i kurv (dummy)
-            </button>
+            <div className="flex gap-3">
+              <button
+                onClick={handleToggleCart}
+                className={`rounded-md px-4 py-2 text-sm font-semibold ${
+                  isInCart
+                    ? "bg-red-500 text-white hover:bg-red-600"
+                    : "bg-black text-white hover:bg-slate-800"
+                }`}
+              >
+                {isInCart ? "Fjern fra kurv" : "Læg i kurv"}
+              </button>
+
+              <Link
+                href="/payment"
+                className="rounded-md bg-emerald-600 text-white px-4 py-2 text-sm font-semibold hover:bg-emerald-700"
+              >
+                Gå til kurv
+              </Link>
+            </div>
           </div>
         </div>
       </div>
