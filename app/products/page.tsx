@@ -74,7 +74,7 @@ export default function ProductsPage() {
           <div>
             <h1 className="text-3xl font-bold">Produkter</h1>
             <p className="text-slate-600 text-sm">
-              Vælg produkter, filtrér på kategori og gå til fake betalingsside.
+              Vælg de produkter du kunne tænke dig, og gå til indkøbskurven når du er klar til at checke ud.
             </p>
           </div>
 
@@ -94,7 +94,7 @@ export default function ProductsPage() {
                   className={`rounded-full border px-3 py-1 text-xs sm:text-sm ${
                     selectedCategory === cat
                       ? "bg-black text-white"
-                      : "bg-white hover:bg-slate-100"
+                      : "bg-white hover:bg-slate-200"
                   }`}
                 >
                   {cat}
@@ -118,7 +118,7 @@ export default function ProductsPage() {
               href="/payment"
               className={`rounded-md px-4 py-2 text-sm font-semibold ${
                 cartItems.length > 0
-                  ? "bg-emerald-600 text-white hover:bg-emerald-700"
+                  ? "bg-emerald-900 text-white hover:bg-emerald-800"
                   : "bg-slate-300 text-slate-500 cursor-not-allowed"
               }`}
               aria-disabled={cartItems.length === 0}
@@ -151,7 +151,7 @@ export default function ProductsPage() {
                     <img
                       src={product.thumbnail}
                       alt={product.title}
-                      className="w-full h-40 object-cover rounded"
+                      className="w-full h-40 object-contain rounded"
                     />
                     <div className="mt-3 space-y-1">
                       <h2 className="font-semibold line-clamp-2">
@@ -170,7 +170,7 @@ export default function ProductsPage() {
                       onClick={() => toggleCart(product)}
                       className={`text-xs sm:text-sm rounded-md px-3 py-1 ${
                         isInCart
-                          ? "bg-red-500 text-white hover:bg-red-600"
+                          ? "bg-red-900 text-white hover:bg-red-800"
                           : "bg-black text-white hover:bg-slate-800"
                       }`}
                     >

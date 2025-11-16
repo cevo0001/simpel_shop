@@ -4,10 +4,9 @@ export default function Home() {
   return (
     <main className="min-h-screen flex flex-col items-center justify-center bg-slate-100">
       <div className="max-w-xl text-center space-y-6">
-        <h1 className="text-4xl font-bold">Velkommen til vores Webshop</h1>
+        <h1 className="text-4xl font-bold">Velkommen til Simpel Shop</h1>
         <p className="text-slate-600">
-          Her kan du se produkter fra DummyJSON API&apos;et, filtrere dem og
-          gå til en fake betalingsside med din kurv.
+          Her kan du finde en masse produkter - vi har alt hvad du står og mangler!
         </p>
         <Link
           href="/products"

@@ -44,7 +44,7 @@ export default function PaymentPage() {
                   </div>
                   <button
                     onClick={() => removeItem(p.id)}
-                    className="text-xs sm:text-sm rounded-md px-3 py-1 bg-red-500 text-white hover:bg-red-600"
+                    className="text-xs sm:text-sm rounded-md px-3 py-1 bg-red-900 text-white hover:bg-red-900"
                   >
                     Fjern
                   </button>
@@ -58,7 +58,7 @@ export default function PaymentPage() {
             </div>
 
             <div className="flex flex-col sm:flex-row gap-3">
-              <button className="flex-1 rounded-md bg-emerald-600 text-white py-3 font-semibold hover:bg-emerald-700">
+              <button className="flex-1 rounded-md bg-emerald-900 text-white py-3 font-semibold hover:bg-emerald-700">
                 Fake betal nu
               </button>
               <button

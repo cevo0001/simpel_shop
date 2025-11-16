@@ -102,7 +102,7 @@ export default function ProductPage() {
           <img
             src={currentProduct.thumbnail}
             alt={currentProduct.title}
-            className="w-full h-80 object-cover rounded"
+            className="w-full h-80 object-contain rounded"
           />
 
           <div className="space-y-4">
@@ -118,7 +118,7 @@ export default function ProductPage() {
                 onClick={handleToggleCart}
                 className={`rounded-md px-4 py-2 text-sm font-semibold ${
                   isInCart
-                    ? "bg-red-500 text-white hover:bg-red-600"
+                    ? "bg-red-900 text-white hover:bg-red-900"
                     : "bg-black text-white hover:bg-slate-800"
                 }`}
               >
@@ -127,7 +127,7 @@ export default function ProductPage() {
 
               <Link
                 href="/payment"
-                className="rounded-md bg-emerald-600 text-white px-4 py-2 text-sm font-semibold hover:bg-emerald-700"
+                className="rounded-md bg-emerald-900 text-white px-4 py-2 text-sm font-semibold hover:bg-emerald-700"
               >
                 Gå til kurv
               </Link>
