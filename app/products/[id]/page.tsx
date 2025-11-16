@@ -71,7 +71,7 @@ export default function ProductPage() {
     );
   }
 
-  // ✨ SAFE VARIABEL – TypeScript elsker det her
+  
   const currentProduct: Product = product;
 
   const isInCart = cartItems.some(

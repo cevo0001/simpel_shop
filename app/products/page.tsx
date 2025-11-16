@@ -143,7 +143,7 @@ export default function ProductsPage() {
                   key={product.id}
                   className="bg-white rounded-lg p-4 shadow hover:shadow-md transition flex flex-col"
                 >
-                  {/* Klikbart kort -> detaljeside */}
+                  {/* Klikbart kort til detaljesiden */}
                   <Link
                     href={`/products/${product.id}`}
                     className="block flex-1"
