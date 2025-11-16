@@ -2,6 +2,20 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import Link from "next/link";
+import { Roboto_Flex, Oxygen } from "next/font/google";
+
+const roboto = Roboto_Flex({
+  subsets: ["latin"],
+  variable: "--font-roboto",
+  weight: ["300", "400", "500", "600", "700", "800", "900"],
+});
+
+const oxygen = Oxygen({
+  subsets: ["latin"],
+  variable: "--font-oxygen",
+  weight: ["300", "400", "700"],
+});
+
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -18,7 +32,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <header className="bg-white border-b">
+        <header className="bg-slate-200 border-b">
           <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
             <Link href="/" className="font-semibold text-lg">
               Simpel Shop
