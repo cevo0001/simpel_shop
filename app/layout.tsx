@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
 import "./globals.css";
 import Link from "next/link";
 import { Roboto_Flex, Oxygen } from "next/font/google";
@@ -16,9 +15,6 @@ const oxygen = Oxygen({
   weight: ["300", "400", "700"],
 });
 
-
-const inter = Inter({ subsets: ["latin"] });
-
 export const metadata: Metadata = {
   title: "Simpel Shop",
   description: "En simpel webshop med DummyJSON produkter",
@@ -31,7 +27,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body
+        className={`${roboto.variable} ${oxygen.variable} bg-background text-foreground`}
+      >
         <header className="bg-slate-200 border-b">
           <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
             <Link href="/" className="font-semibold text-lg">
