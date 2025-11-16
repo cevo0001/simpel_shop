@@ -18,7 +18,7 @@ export const useCartStore = create<CartState>((set) => ({
   items: [],
   addItem: (item) =>
     set((state) => {
-      // undgå dubletter – hvis varen allerede er i kurven, gør ingenting
+      // undgå dubletter 
       if (state.items.find((i) => i.id === item.id)) {
         return state;
       }
